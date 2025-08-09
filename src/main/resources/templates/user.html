@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User</title>
+    <link rel="stylesheet" th:href="@{/css/user.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Xử lý sự kiện tab
+      const tabs = document.querySelectorAll(".tab-menu li");
+      const panes = document.querySelectorAll(".tab-pane");
+
+      // Lặp qua từng tab để gắn sự kiện click
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", function () {
+          // Bỏ trạng thái "active" của tất cả các tab và nội dung
+          tabs.forEach((t) => t.classList.remove("active"));
+          panes.forEach((pane) => pane.classList.remove("active"));
+
+          // Kích hoạt tab được chọn và nội dung tương ứng
+          const targetTab = this.getAttribute("data-tab"); // Lấy giá trị của thuộc tính "data-tab"
+          document.getElementById(targetTab).classList.add("active"); // Hiển thị nội dung của tab
+          this.classList.add("active"); // Đánh dấu tab hiện tại là "active"
+        });
+      });
+
+
+
+    });
+  </script>
+</head>
+<body>
+    <!-- header -->
+    <header>
+      <div class="top-header">
+        <div class="top-icons">
+          <!--                target="_blank": yêu cầu trình duyệt mở tab mới-->
+          <a href="https://www.facebook.com/" target="_blank" class="icons">
+            <img th:src="@{/img/home/facebook.png}" alt="Lỗi hiển thị">
+          </a>
+          <a href="https://www.tiktok.com/@kiki_000000?_t=8rqGWTUu1y5&_r=1" target="_blank" class="icons">
+            <img th:src="@{/img/home/tiktok.png}" alt="Lỗi hiển thị">
+          </a>
+          <a href="https://x.com/Yiint24?t=_9kv36zTbhujLr5HxyLXAg&s=09" target="_blank" class="icons">
+            <img th:src="@{/img/home/twitter.png}" alt="Lỗi hiển thị">
+          </a>
+
+        </div>
+
+          <a href="http://localhost:8080/userInfo?activeTab=orders" class="track-order">Game của bạn</a>
+      </div>
+
+      <div class="main-header">
+        <div class="logo">
+          <img th:src="@{/img/home/logo.png}" alt="logo">
+          <a th:href="@{/}">
+            <p>BDLV <span>gaming</span></p>
+          </a>
+        </div>
+        <nav class="nav-menu">
+          <a href="/#best-seller">Game bán chạy</a>
+          <a href="/#list-newest">Game mới ra mắt</a>
+        </nav>
+        <div class="icons">
+          <a th:href="@{/userInfo}"><img th:src="@{/img/home/user.png}" alt="Lỗi hiển thị"></a>
+          <a th:href="@{/cart}"><img th:src="@{/img/home/cart.png}" alt="Lỗi hiển thị"></a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <div class="tab-container">
+        <!-- Thẻ container để hiển thị nội dung tabs -->
+        <aside class="tab-menu">
+
+            <!-- Tên, chỉnh sửa hồ sơ -->
+            <div class="profile">
+                <a href="#"><img th:src="@{/img/user/avt2.jpg}" alt="Profile" class="profile-img"></a>
+                <p class="username" th:text="${userInfo.username}"></p>
+            </div>
+
+            <!-- Menu -->
+            <ul>
+                <li th:classappend="${activeTab == 'profile' ? 'active' : ''}">
+                    <a th:href="@{/userInfo(activeTab='profile')}">
+                        <i class="icon user-icon"></i>
+                        Tài Khoản Của Tôi
+                    </a>
+                </li>
+                <li th:classappend="${activeTab == 'orders' ? 'active' : ''}">
+                    <a th:href="@{/userInfo(activeTab='orders')}">
+                        <i class="icon orders-icon"></i>
+                        Đơn Mua
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="tab-content">
+            <!-- Tab tài khoản -->
+            <div th:if="${activeTab == 'profile'}">
+                <h2>Hồ Sơ Của Tôi</h2>
+                <form id="profile-form" th:action="@{/updateUserInfo}" method="post" th:object="${userInfo}">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" th:field="*{username}" required>
+                    <label for="email">Email</label>
+                    <input type="text" id="email" th:field="*{email}" readonly>
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" id="phone" th:field="*{phone}" required>
+                    <button type="submit" class="save-btn">Lưu</button>
+                </form>
+            </div>
+
+            <!-- Tab đơn mua -->
+            <div th:if="${activeTab == 'orders'}">
+                <h2>Đơn Mua</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Tên Game</th>
+                        <th>Tài khoản</th>
+                        <th>Mật khẩu</th>
+                        <th>Giá tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="orderDetail : ${orderDetailsList}">
+                        <td th:text="${orderDetail.gameName}"></td>
+                        <td th:text="${orderDetail.username}"></td>
+                        <td th:text="${orderDetail.password}"></td>
+                        <td th:text="${orderDetail.price}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+</body>
+</html>
